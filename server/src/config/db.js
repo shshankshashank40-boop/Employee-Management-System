@@ -2,7 +2,15 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGODB_URI;
+    let mongoURI = process.env.MONGODB_URI ? process.env.MONGODB_URI.trim() : '';
+
+    // Strip accidental surrounding quotes if pasted into dashboard with quotes
+    if (
+      (mongoURI.startsWith('"') && mongoURI.endsWith('"')) ||
+      (mongoURI.startsWith("'") && mongoURI.endsWith("'"))
+    ) {
+      mongoURI = mongoURI.slice(1, -1).trim();
+    }
 
     if (!mongoURI) {
       console.error('CRITICAL: MONGODB_URI is not defined in environment variables.');
